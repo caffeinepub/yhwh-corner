@@ -1,0 +1,236 @@
+// Version: 1.0.0
+type AdId__248619452 = AdId__711017315;
+type AdId__711017315 = Nat;
+type AdSlotType__212124546 = AdSlotType__785529367;
+type AdSlotType__785529367 = {#homepage_banner; #pre_roll; #sidebar};
+type Ad__978763112 =
+  {
+    advertiserId : UserId__99084520;
+    createdAt : Timestamp__239110134;
+    var durationDays : Nat;
+    var endDate : Timestamp__239110134;
+    id : AdId__248619452;
+    var isActive : Bool;
+    var logoUrl : Text;
+    var name : Text;
+    slotType : AdSlotType__212124546;
+    var startDate : Timestamp__239110134;
+    var targetUrl : Text;
+    totalCost : Nat
+  };
+type CommentId__740647676 = Nat;
+type Comment__495386713 =
+  {
+    authorId : UserId__158757552;
+    createdAt : Timestamp__301639476;
+    id : CommentId__740647676;
+    var isDeleted : Bool;
+    text : Text;
+    videoId : VideoId__498652803
+  };
+type CreatorEarnings__579757135 =
+  {
+    creatorId : UserId__185462529;
+    var totalEarnings : Nat;
+    videoEarnings : [(VideoId__294170464, Nat)]
+  };
+type CreatorPayout__279208637 =
+  {
+    amount : Nat;
+    creatorId : UserId__904478923;
+    timestamp : Timestamp__481935476;
+    videoId : ?VideoId__833998359
+  };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type LedgerEntryType__814478405 =
+  {#adRevenueIn; #creatorPayout; #viewerRewardOut};
+type Like__66147998 =
+  {
+    createdAt : Timestamp__301639476;
+    userId : UserId__158757552;
+    videoId : VideoId__498652803
+  };
+type LiveStreamId__600813370 = Nat;
+type LiveStreamStatus__830981512 = {#active; #archived; #ended; #scheduled};
+type LiveStream__1004246443 =
+  {
+    var archivedVideoId : ?VideoId__498652803;
+    creatorId : UserId__158757552;
+    description : Text;
+    var endedAt : ?Timestamp__301639476;
+    id : LiveStreamId__600813370;
+    scheduledAt : Timestamp__301639476;
+    var startedAt : ?Timestamp__301639476;
+    var status : LiveStreamStatus__830981512;
+    title : Text;
+    var viewerCount : Nat
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type PlatformLedgerEntry__663735678 =
+  {
+    amount : Nat;
+    description : Text;
+    entryType : LedgerEntryType__814478405;
+    id : Nat;
+    timestamp : Timestamp__209438455
+  };
+type SlotPricing__629912955 =
+  {var dailyPrice : Nat; slotType : AdSlotType__212124546};
+type Timestamp__209438455 = Timestamp__301639476;
+type Timestamp__239110134 = Timestamp__301639476;
+type Timestamp__301639476 = Int;
+type Timestamp__481935476 = Timestamp__301639476;
+type Timestamp__778030842 = Timestamp__301639476;
+type Timestamp__893823798 = Timestamp__301639476;
+type UserId__1043627770 = UserId__158757552;
+type UserId__158757552 = Principal;
+type UserId__185462529 = UserId__158757552;
+type UserId__904478923 = UserId__158757552;
+type UserId__96966654 = UserId__158757552;
+type UserId__99084520 = UserId__158757552;
+type UserRole__41952412 = UserRole__451090586;
+type UserRole__451090586 = {#admin; #advertiser; #creator; #viewer};
+type UserStatus__357598751 = UserStatus__418351110;
+type UserStatus__418351110 = {#active; #flagged; #suspended};
+type User__98118558 =
+  {
+    var balance : Nat;
+    createdAt : Timestamp__778030842;
+    var email : Text;
+    id : UserId__1043627770;
+    role : UserRole__41952412;
+    var status : UserStatus__357598751;
+    var username : Text
+  };
+type VideoId__294170464 = VideoId__498652803;
+type VideoId__311199452 = VideoId__498652803;
+type VideoId__498652803 = Nat;
+type VideoId__833998359 = VideoId__498652803;
+type VideoStatus__1027431841 = VideoStatus__16684472;
+type VideoStatus__16684472 = {#draft; #flagged; #published; #unpublished};
+type Video__1035008865 =
+  {
+    var category : Text;
+    createdAt : Timestamp__893823798;
+    creatorId : UserId__96966654;
+    var description : Text;
+    id : VideoId__311199452;
+    var status : VideoStatus__1027431841;
+    var tags : [Text];
+    var thumbnailUrl : Text;
+    var title : Text;
+    var totalRevenue : Nat;
+    var totalWatchSeconds : Nat;
+    var videoUrl : Text;
+    var viewCount : Nat
+  };
+type ViewerRewardPayout__543588334 =
+  {
+    amount : Nat;
+    timestamp : Timestamp__481935476;
+    viewerId : UserId__904478923
+  };
+type ViewerWatchRecord__251398958 =
+  {
+    var balance : Nat;
+    var dailyWatchSeconds : Nat;
+    var lastResetDate : Text;
+    var pendingReward : Nat;
+    var totalEarned : Nat;
+    userId : UserId__185462529
+  };
+type WatchHistoryEntry__225490477 =
+  {
+    userId : UserId__158757552;
+    videoId : VideoId__498652803;
+    watchSeconds : Nat;
+    watchedAt : Timestamp__301639476
+  };
+actor {
+  stable adCounter : {var next : Nat};
+  stable ads :
+    {
+      var root : Node__46230540<AdId__711017315, Ad__978763112>;
+      var size : Nat__490723111
+    };
+  stable commentCounter : {var count : Nat};
+  stable comments :
+    {
+      var root : Node__46230540<CommentId__740647676, Comment__495386713>;
+      var size : Nat__490723111
+    };
+  stable creatorEarnings :
+    {
+      var root : Node__46230540<UserId__158757552, CreatorEarnings__579757135>;
+      var size : Nat__490723111
+    };
+  stable creatorPayouts :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?CreatorPayout__279208637]];
+      var elementIndex : Nat__490723111
+    };
+  stable ledgerCounter : {var next : Nat};
+  stable likes :
+    {
+      var root : Node__46230540<Text, Like__66147998>;
+      var size : Nat__490723111
+    };
+  stable liveStreams :
+    {
+      var root :
+        Node__46230540<LiveStreamId__600813370, LiveStream__1004246443>;
+      var size : Nat__490723111
+    };
+  stable platformConfig :
+    {var creatorRevenueSharePercent : Nat; var viewerRewardPercent : Nat};
+  stable platformFinancials : {var balance : Nat; var revenue : Nat};
+  stable platformLedger :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?PlatformLedgerEntry__663735678]];
+      var elementIndex : Nat__490723111
+    };
+  stable slotPricing :
+    {
+      var root : Node__46230540<Text, SlotPricing__629912955>;
+      var size : Nat__490723111
+    };
+  stable streamCounter : {var count : Nat};
+  stable users :
+    {
+      var root : Node__46230540<UserId__158757552, User__98118558>;
+      var size : Nat__490723111
+    };
+  stable videoCounter : {var next : Nat};
+  stable videos :
+    {
+      var root : Node__46230540<VideoId__498652803, Video__1035008865>;
+      var size : Nat__490723111
+    };
+  stable viewerPayouts :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ViewerRewardPayout__543588334]];
+      var elementIndex : Nat__490723111
+    };
+  stable watchHistory :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?WatchHistoryEntry__225490477]];
+      var elementIndex : Nat__490723111
+    };
+  stable watchRecords :
+    {
+      var root :
+        Node__46230540<UserId__158757552, ViewerWatchRecord__251398958>;
+      var size : Nat__490723111
+    }
+};

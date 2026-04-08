@@ -1,0 +1,277 @@
+type WatchEvent = 
+ record {
+   videoId: VideoId;
+   watchSeconds: nat;
+ };
+type ViewerRewardPayout = 
+ record {
+   amount: nat;
+   timestamp: Timestamp;
+   viewerId: UserId;
+ };
+type VideoUploadRequest = 
+ record {
+   category: text;
+   description: text;
+   tags: vec text;
+   thumbnailUrl: text;
+   title: text;
+   videoUrl: text;
+ };
+type VideoStatus = 
+ variant {
+   draft;
+   flagged;
+   published;
+   unpublished;
+ };
+type VideoPublic = 
+ record {
+   category: text;
+   createdAt: Timestamp;
+   creatorId: UserId;
+   description: text;
+   id: VideoId;
+   status: VideoStatus;
+   tags: vec text;
+   thumbnailUrl: text;
+   title: text;
+   totalWatchSeconds: nat;
+   videoUrl: text;
+   viewCount: nat;
+ };
+type VideoId = nat;
+type UserStatus = 
+ variant {
+   active;
+   flagged;
+   suspended;
+ };
+type UserRole = 
+ variant {
+   admin;
+   advertiser;
+   creator;
+   viewer;
+ };
+type UserPublic = 
+ record {
+   balance: nat;
+   createdAt: Timestamp;
+   email: text;
+   id: UserId;
+   role: UserRole;
+   status: UserStatus;
+   username: text;
+ };
+type UserId = principal;
+type UpdateProfileRequest = 
+ record {
+   email: opt text;
+   username: opt text;
+ };
+type Timestamp = int;
+type StartLiveStreamRequest = 
+ record {
+   description: text;
+   scheduledAt: Timestamp;
+   title: text;
+ };
+type RewardSummary = 
+ record {
+   balance: nat;
+   dailyWatchSeconds: nat;
+   pendingReward: nat;
+   totalEarned: nat;
+ };
+type RegisterRequest = 
+ record {
+   email: text;
+   role: UserRole;
+   username: text;
+ };
+type PostCommentRequest = 
+ record {
+   "text": text;
+   videoId: VideoId;
+ };
+type PlatformStats = 
+ record {
+   platformBalance: nat;
+   totalAdRevenue: nat;
+   totalAdmins: nat;
+   totalAdvertisers: nat;
+   totalCreatorPayouts: nat;
+   totalCreators: nat;
+   totalRewardsPaid: nat;
+   totalVideos: nat;
+   totalViewers: nat;
+ };
+type Page = 
+ record {
+   items: vec VideoPublic;
+   limit: nat;
+   offset: nat;
+   total: nat;
+ };
+type LiveStreamStatus = 
+ variant {
+   active;
+   archived;
+   ended;
+   scheduled;
+ };
+type LiveStreamPublic = 
+ record {
+   archivedVideoId: opt VideoId;
+   creatorId: UserId;
+   creatorName: text;
+   description: text;
+   endedAt: opt Timestamp;
+   id: LiveStreamId;
+   scheduledAt: Timestamp;
+   startedAt: opt Timestamp;
+   status: LiveStreamStatus;
+   title: text;
+   viewerCount: nat;
+ };
+type LiveStreamId = nat;
+type CreatorPayout = 
+ record {
+   amount: nat;
+   creatorId: UserId;
+   timestamp: Timestamp;
+   videoId: opt VideoId;
+ };
+type CreatorEarningsPublic = 
+ record {
+   creatorId: UserId;
+   totalEarnings: nat;
+   videoEarnings: vec record {
+                        VideoId;
+                        nat;
+                      };
+ };
+type CommentPublic = 
+ record {
+   authorId: UserId;
+   authorName: text;
+   createdAt: Timestamp;
+   id: CommentId;
+   isDeleted: bool;
+   "text": text;
+   videoId: VideoId;
+ };
+type CommentId = nat;
+type AdSlotType = 
+ variant {
+   homepage_banner;
+   pre_roll;
+   sidebar;
+ };
+type AdPurchaseRequest = 
+ record {
+   durationDays: nat;
+   logoUrl: text;
+   name: text;
+   slotType: AdSlotType;
+   targetUrl: text;
+ };
+type AdPublic = 
+ record {
+   advertiserId: UserId;
+   createdAt: Timestamp;
+   durationDays: nat;
+   endDate: Timestamp;
+   id: AdId;
+   isActive: bool;
+   logoUrl: text;
+   name: text;
+   slotType: AdSlotType;
+   startDate: Timestamp;
+   targetUrl: text;
+   totalCost: nat;
+ };
+type AdId = nat;
+service : {
+  approveUser: (userId: UserId) -> ();
+  archiveLiveStream: (streamId: LiveStreamId, videoUrl: text) ->
+   (variant {
+      err: text;
+      ok: LiveStreamPublic;
+    });
+  claimDailyReward: () -> (nat);
+  deleteComment: (commentId: CommentId, videoId: VideoId) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  endLiveStream: (streamId: LiveStreamId) ->
+   (variant {
+      err: text;
+      ok: LiveStreamPublic;
+    });
+  flagUser: (userId: UserId) -> ();
+  flagVideo: (videoId: VideoId) -> ();
+  getActiveAds: (slotType: AdSlotType) -> (vec AdPublic) query;
+  getAdSlotPricing: () -> (vec record {
+                                 AdSlotType;
+                                 nat;
+                               }) query;
+  getCreatorEarnings: (creatorId: UserId) ->
+   (opt CreatorEarningsPublic) query;
+  getLikeCount: (videoId: VideoId) -> (nat) query;
+  getLiveStream: (id: LiveStreamId) -> (opt LiveStreamPublic) query;
+  getMyAdCampaigns: () -> (vec AdPublic) query;
+  getMyCreatorEarnings: () -> (opt CreatorEarningsPublic) query;
+  getMyProfile: () -> (opt UserPublic) query;
+  getMyRewardSummary: () -> (RewardSummary) query;
+  getPlatformStats: () -> (PlatformStats);
+  getRecommendedVideos: (limit: nat) -> (vec VideoPublic) query;
+  getRelatedVideos: (videoId: VideoId, limit: nat) -> (vec VideoPublic) query;
+  getTrendingVideos: (limit: nat) -> (vec VideoPublic) query;
+  getUserProfile: (userId: UserId) -> (opt UserPublic) query;
+  getVideo: (videoId: VideoId) -> (opt VideoPublic) query;
+  goLive: (streamId: LiveStreamId) ->
+   (variant {
+      err: text;
+      ok: LiveStreamPublic;
+    });
+  hasLiked: (videoId: VideoId) -> (bool) query;
+  joinLiveStream: (id: LiveStreamId) -> (variant {
+                                           err: text;
+                                           ok;
+                                         });
+  leaveLiveStream: (id: LiveStreamId) -> (variant {
+                                            err: text;
+                                            ok;
+                                          });
+  listActiveLiveStreams: () -> (vec LiveStreamPublic) query;
+  listAllCreatorPayouts: () -> (vec CreatorPayout);
+  listAllViewerRewardPayouts: () -> (vec ViewerRewardPayout);
+  listComments: (videoId: VideoId) -> (vec CommentPublic) query;
+  listPublishedVideos: (offset: nat, limit: nat) -> (Page) query;
+  listVideosByCreator: (creatorId: UserId) -> (vec VideoPublic) query;
+  postComment: (req: PostCommentRequest) ->
+   (variant {
+      err: text;
+      ok: CommentPublic;
+    });
+  publishVideo: (videoId: VideoId) -> (VideoPublic);
+  purchaseAdSlot: (req: AdPurchaseRequest) -> (AdPublic);
+  recordWatchTime: (event: WatchEvent) -> ();
+  register: (req: RegisterRequest) -> (UserPublic);
+  searchVideos: (term: text) -> (vec VideoPublic) query;
+  setAdSlotPricing: (slotType: AdSlotType, dailyPrice: nat) -> ();
+  setCreatorRevenueSharePercent: (percent: nat) -> ();
+  setViewerRewardPercent: (percent: nat) -> ();
+  startLiveStream: (req: StartLiveStreamRequest) ->
+   (variant {
+      err: text;
+      ok: LiveStreamPublic;
+    });
+  toggleLike: (videoId: VideoId) -> (bool);
+  unpublishVideo: (videoId: VideoId) -> (VideoPublic);
+  updateProfile: (req: UpdateProfileRequest) -> (UserPublic);
+  uploadVideo: (req: VideoUploadRequest) -> (VideoPublic);
+}

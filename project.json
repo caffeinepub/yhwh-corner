@@ -1,0 +1,21 @@
+{
+  "overview": "A YouTube-inspired video platform with a creator-first economy: creators earn 25% of revenue, viewers earn 1% of their watch time daily, and businesses pay premium rates for ad placement. Every stakeholder has a role and a reason to participate.",
+  "features": [
+    "Video upload and playback for creators",
+    "Creator dashboard with 25% revenue share tracking",
+    "Viewer rewards — earn 1% per hour watched daily",
+    "Premium ad marketplace (airway time) for businesses and investors",
+    "Multi-role auth: creator, viewer, advertiser, admin",
+    "Home feed with video browsing and search",
+    "Admin panel with full platform analytics and payout controls"
+  ],
+  "category": "media",
+  "tags": [
+    "video",
+    "creator-economy",
+    "revenue-sharing",
+    "advertising",
+    "streaming"
+  ],
+  "last_updated": "2026-04-07T21:45:11.797Z"
+}
